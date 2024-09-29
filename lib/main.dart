@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'powertrain.dart';
+import 'video_tab.dart';
 import 'robotic_arm.dart';
+import 'powertrain.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,54 +12,65 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: 'Joystick',
-      home: MainPage(),
+    return MaterialApp(
+      title: 'Camera Streams',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: const MyHomePage(),
     );
   }
 }
 
-class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
 
   @override
-  State<MainPage> createState() => _MainPageState();
+  State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+class _MyHomePageState extends State<MyHomePage> {
+  int _selectedIndex = 0;
 
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-  }
+  static const List<Widget> _widgetOptions = <Widget>[
+    VideoTab(),
+    RoboticArmTab(),
+    PowertrainTab(),
+  ];
 
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Joystickey'),
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: const [
-            Tab(text: 'Powertrain'),
-            Tab(text: 'Crazy Arm'),
-          ],
-        ),
+        title: const Text('Camera Streams'),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: const [
-          PowertrainTab(),
-          RoboticArmTab(),
+      body: Center(
+        child: _widgetOptions.elementAt(_selectedIndex),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.videocam),
+            label: 'Video',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.build),
+            label: 'Robotic Arm',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.directions_car),
+            label: 'Powertrain',
+          ),
         ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.amber[800],
+        onTap: _onItemTapped,
       ),
     );
   }

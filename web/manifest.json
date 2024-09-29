@@ -1,6 +1,6 @@
 {
-    "name": "sensors",
-    "short_name": "sensors",
+    "name": "My Flutter App",
+    "short_name": "FlutterApp",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
