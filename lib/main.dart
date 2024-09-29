@@ -49,7 +49,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
           controller: _tabController,
           tabs: const [
             Tab(text: 'Powertrain'),
-            Tab(text: 'Robotic Arm'),
+            Tab(text: 'Crazy Arm'),
           ],
         ),
       ),

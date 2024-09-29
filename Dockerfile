@@ -1,15 +1,39 @@
-# Use the official Dart image as a base
-FROM dart:stable AS build
+# Use Ubuntu as the base image
+FROM ubuntu:22.04
 
-# Install Flutter dependencies
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
+# Avoid prompts from apt
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install basic utilities, Flutter dependencies, and additional networking/sysadmin tools
+RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     curl \
     unzip \
     xz-utils \
     zip \
-    libglu1-mesa
+    libglu1-mesa \
+    wget \
+    ca-certificates \
+    gnupg \
+    iproute2 \
+    net-tools \
+    iputils-ping \
+    traceroute \
+    nmap \
+    netcat \
+    tcpdump \
+    telnet \
+    dnsutils \
+    whois \
+    htop \
+    iftop \
+    iotop \
+    vim \
+    nano \
+    tmux \
+    screen \
+    sudo \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install Flutter SDK
 RUN git clone https://github.com/flutter/flutter.git /flutter
@@ -20,22 +44,11 @@ RUN flutter channel stable && \
     flutter upgrade && \
     flutter config --enable-web
 
-# Copy the project files
+# Set the working directory
 WORKDIR /app
-COPY . .
 
-# Get dependencies
-RUN flutter pub get
+# Expose port 8080
+EXPOSE 8080
 
-# Build the Flutter web project
-RUN flutter build web
-
-# Use a lightweight web server to serve the Flutter web app
-FROM nginx:alpine
-COPY --from=build /app/build/web /usr/share/nginx/html
-
-# Expose port 80
-EXPOSE 80
-
-# Start Nginx server
-CMD ["nginx", "-g", "daemon off;"]
+# Set the default command to bash
+CMD ["/bin/bash"]

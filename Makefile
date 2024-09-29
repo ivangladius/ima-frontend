@@ -2,9 +2,10 @@
 IMAGE_NAME = flutter-web-app
 CONTAINER_NAME = flutter-web-container
 PORT = 8080
+CURRENT_DIR = $(shell pwd)
 
 # Phony targets
-.PHONY: build run stop rm clean rebuild logs
+.PHONY: build run stop rm clean rebuild logs rebuild-app
 
 # Build the Docker image
 build:
@@ -12,7 +13,12 @@ build:
 
 # Run the Docker container
 run:
-	docker run -d -p $(PORT):80 --name $(CONTAINER_NAME) $(IMAGE_NAME)
+	docker run -it --rm \
+		-p $(PORT):8080 \
+		--name $(CONTAINER_NAME) \
+		-v $(CURRENT_DIR):/app \
+		-e TERM=xterm-256color \
+		$(IMAGE_NAME)
 
 # Stop the Docker container
 stop:
@@ -31,3 +37,19 @@ rebuild: clean build run
 # Show logs from the container
 logs:
 	docker logs -f $(CONTAINER_NAME)
+
+# Attach to the container
+attach:
+	docker attach --sig-proxy=false $(CONTAINER_NAME)
+
+# Trigger a rebuild of the Flutter app
+rebuild-app:
+	docker exec -it $(CONTAINER_NAME) flutter pub get
+	docker exec -it $(CONTAINER_NAME) flutter run -d web-server --web-port=8080 --web-hostname=0.0.0.0 --debug
+
+# Clean the project
+clean:
+	flutter clean
+	rm -rf build
+	rm -rf .dart_tool
+	rm -f pubspec.lock

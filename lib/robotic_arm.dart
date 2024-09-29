@@ -13,7 +13,7 @@ class RoboticArmTab extends StatelessWidget {
             onPressed: () {
               // Add your onPressed code here!
             },
-            child: const Text('Button 1'),
+            child: const Text('wtf'), // Changed from 'Button 1' to 'asdf'
           ),
           const SizedBox(height: 20),
           ElevatedButton(
